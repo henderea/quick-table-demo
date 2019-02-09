@@ -1,0 +1,34 @@
+{
+  "name": "quick-table",
+  "version": "1.0.0",
+  "description": "A test of a library for simple table manipulation",
+  "main": "",
+  "scripts": {
+    "prod": "yarn build && yarn serve:prod",
+    "serve:prod": "serve dist",
+    "serve:dev": "serve build",
+    "start": "concurrently \"yarn serve:dev\" \"yarn watch\" --names \"💻,📦\" --prefix name",
+    "build": "static-site-builder build",
+    "now-build": "static-site-builder build",
+    "watch": "static-site-builder watch",
+    "clean": "rm -rf dist build",
+    "deploy": "now && now alias && now rm quick-table --safe --yes"
+  },
+  "author": "henderea",
+  "license": "ISC",
+  "repository": "https://github.com/henderea/quick-table",
+  "devDependencies": {
+    "@henderea/static-site-builder": "^1.2.6",
+    "chalk": "^2.4.2",
+    "concurrently": "^4.1.0",
+    "diff": "^4.0.1",
+    "eslint": "^5.13.0",
+    "inquirer": "^6.2.2",
+    "serve": "^10.1.2"
+  },
+  "dependencies": {
+    "jquery": "^3.3.1",
+    "jquery-ui": "^1.12.1",
+    "lodash": "^4.17.11"
+  }
+}

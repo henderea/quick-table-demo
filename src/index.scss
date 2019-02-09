@@ -1,0 +1,17 @@
+.center {
+    text-align: center;
+}
+
+#quickTable {
+    border: 1px solid #949494;
+    border-collapse: collapse;
+    thead {
+        th, td {
+            background-color: #ccc;
+        }
+    }
+    th, td {
+        border: 1px solid #949494;
+        padding: 5px;
+    }
+}
