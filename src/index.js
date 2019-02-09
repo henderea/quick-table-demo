@@ -11,43 +11,25 @@ class QuickTableColumn extends EventEmitter {
         super();
         this._quickTable = quickTable;
         this._index = index;
+        this.on('column.visible', (col, oldVisible, newVisible) => this.quickTable.trigger('column.visible', col, oldVisible, newVisible));
     }
 
-    get quickTable() {
-        return this._quickTable;
-    }
+    get quickTable() { return this._quickTable; }
 
-    get index() {
-        return this._index;
-    }
+    get index() { return this._index; }
 
-    get $head() {
-        return this.quickTable.$table.find(`thead tr th:nth-child(${this.index + 1}), thead tr td:nth-child(${this.index + 1})`);
-    }
+    get $head() { return this.quickTable.$table.find(`thead tr th:nth-child(${this.index + 1}), thead tr td:nth-child(${this.index + 1})`); }
 
-    get $body() {
-        return this.quickTable.$table.find(`tbody tr th:nth-child(${this.index + 1}), tbody tr td:nth-child(${this.index + 1})`);
-    }
+    get $body() { return this.quickTable.$table.find(`tbody tr th:nth-child(${this.index + 1}), tbody tr td:nth-child(${this.index + 1})`); }
 
-    get $() {
-        return this.$head.add(this.$body);
-    }
+    get $() { return this.$head.add(this.$body); }
 
-    get visible() {
-        return this.$.is(function() {
-            return $(this).css('display') != 'none';
-        });
-    }
+    get visible() { return this.$.is(function() { return $(this).css('display') != 'none'; }); }
 
     set visible(visible) {
         let oldVisible = this.visible;
-        if(visible) {
-            this.$.show();
-        } else {
-            this.$.hide();
-        }
+        this.$[visible ? 'show' : 'hide']();
         this.trigger('column.visible', this.index, oldVisible, visible);
-        this.quickTable.trigger('column.visible', this.index, oldVisible, visible);
     }
 }
 
@@ -58,135 +40,126 @@ class QuickTableRow {
         this._index = index;
     }
 
-    get quickTable() {
-        return this._quickTable;
-    }
+    get quickTable() { return this._quickTable; }
 
-    get isHead() {
-        return this._isHead;
-    }
+    get isHead() { return this._isHead; }
 
-    get index() {
-        return this._index;
-    }
+    get index() { return this._index; }
 
-    get $() {
-        if(isHead) {
-            return this.quickTable.$head.find('tr').eq(this.index);
+    get $() { return this.quickTable.getSection(this.isHead).find('tr').eq(this.index); }
+
+    get $cells() { return this.$.find('th,td'); }
+
+    get length() { return this.$cells.length; }
+
+    get cellHtmlData() { return this.$cells.map((i, e) => $(e).html()); }
+
+    get cellTextData() { return this.$cells.map((i, e) => $(e).text()); }
+
+    get data() {
+        if(this.quickTable.rawData && this.quickTable.rawData.length > this.index) {
+            return this.quickTable.rawData[this.index];
         }
-        return this.quickTable.$body.find('tr').eq(this.index);
-    }
-
-    get $cells() {
-        return this.$.find('th,td');
-    }
-
-    get length() {
-        return this.$cells.length;
+        return this.cellHtmlData;
     }
 }
 
 class QuickTable extends EventEmitter {
-    constructor(table) {
+    constructor(table, initFunc = null) {
         super();
         this._table = $(table);
         this._columns = {};
         this._rows = {}
         this._data = [];
         this._columnDefs = [];
-    }
-
-    get $table() {
-        return this._table;
-    }
-
-    get $head() {
-        return this.$table.find('thead');
-    }
-
-    get $body() {
-        return this.$table.find('tbody');
-    }
-
-    get columnCount() {
-        return this.$table.find('tr').eq(0).find('th,td').length;
-    }
-
-    get columns() {
-        let rv = [];
-        for(let i = 0; i < this.columnCount; i++) {
-            rv.push(this.column(i));
+        this._autoDraw = true;
+        this._inInit = false;
+        if(initFunc && typeof initFunc == 'function') {
+            this._inInit = true;
+            initFunc(this);
+            this._inInit = false;
         }
-        return rv;
     }
+
+    chain(func) {
+        func(this);
+        return this;
+    }
+
+    get autoDraw() { return this._autoDraw; }
+
+    set autoDraw(autoDraw) { this._autoDraw = autoDraw; }
+
+    get $table() { return this._table; }
+
+    getSection(isHead) { return this.$table.find(isHead ? 'thead' : 'tbody'); }
+
+    get $head() { return this.getSection(true); }
+
+    get $body() { return this.getSection(false); }
+
+    get columnCount() { return this.$table.find('tr').eq(0).find('th,td').length; }
+
+    get columns() { return _.map(_.range(this.columnCount), i => this.column(i)); }
 
     column(column) {
-        if(column >= this.columnCount) { return null; }
+        if(!_.inRange(column, this.columnCount)) { return null; }
         if(!(this._columns[column] instanceof QuickTableColumn)) {
             this._columns[column] = new QuickTableColumn(this, column);
         }
         return this._columns[column];
     }
 
-    get rowCount() {
-        return this.$body.find('tr').length;
-    }
+    getRowCount(isHead) { return this[isHead ? '$head' : '$body'].find('tr').length }
 
-    get headerRowCount() {
-        return this.$head.find('tr').length;
-    }
+    get rowCount() { return this.getRowCount(false); }
 
-    getRows(isHead) {
-        let rv = [];
-        for(let i = 0; i < (isHead ? this.headerRowCount : this.rowCount); i++) {
-            rv.push(this.row(i, isHead));
-        }
-        return rv;
-    }
+    get headerRowCount() { return this.getRowCount(true); }
 
-    get rows() {
-        return this.getRows(false);
-    }
+    getRows(isHead) { return _.map(_.range(this.getRowCount(isHead)), i => this.row(i)); }
 
-    get headerRows() {
-        return this.getRows(true);
-    }
+    get rows() { return this.getRows(false); }
+
+    get headerRows() { return this.getRows(true); }
 
     row(row, isHead = false) {
-        if(row >= (isHead ? this.headerRowCount : this.rowCount)) { return null; }
+        if(!_.inRange(row, this.getRowCount(isHead))) { return null; }
         if(!(this._rows[row] instanceof QuickTableRow)) {
             this._rows[row] = new QuickTableRow(this, isHead, row);
         }
         return this._rows[row];
     }
 
-    headerRow(row) {
-        return this.row(row, true);
-    }
+    headerRow(row) { return this.row(row, true); }
 
-    get columnDefs() {
-        return this._columnDefs;
-    }
+    get columnDefs() { return this._columnDefs; }
 
     set columnDefs(columnDefs) {
+        if(columnDefs.length < this.columnCount) {
+            throw `Not enough columnDefs have been provided. Have ${this.columnCount} columns, but only ${columnDefs.length} columnDefs.`;
+        }
         this._columnDefs = columnDefs;
+        if(this.autoDraw && this._data && this._data.length > 0) {
+            this.draw();
+        }
     }
 
-    get rawData() {
-        return this._data;
-    }
+    get rawData() { return this._data; }
 
     get data() {
         if(this._data && this._data.length > 0) {
             return this._data;
         }
-        return _.map(this.rows, r => _.map(r.$cells, c => c.html()));
+        return this.cellTextData;
     }
+
+    get cellHtmlData() { return _.map(this.rows, r => r.cellHtmlData); }
+    get cellTextData() { return _.map(this.rows, r => r.cellTextData); }
 
     set data(data) {
         if(!data || data.length == 0) {
             this._data = [];
-            this.draw();
+            if(this.autoDraw) { this.draw(); }
             return;
         }
         if(!_.isArray(data)) {
@@ -203,16 +176,17 @@ class QuickTable extends EventEmitter {
                 throw `One or more data rows had a size below the column count of ${colCount}. Minimum data row size: ${minSize}`;
             }
             this._data = data;
-            this.draw();
+            if(this.autoDraw) { this.draw(); }
         } else if(colDefCount < colCount) {
             throw `Not enough columnDefs have been provided. Have ${colCount} columns, but only ${colDefCount} columnDefs.`;
         } else {
             this._data = data;
-            this.draw();
+            if(this.autoDraw) { this.draw(); }
         }
     }
 
     draw() {
+        if(this._inInit) { return this; }
         let $body = this.$body;
         $body.empty();
         if(!this._data || this._data.length == 0) {
@@ -221,7 +195,7 @@ class QuickTable extends EventEmitter {
         let colDefs = this.columnDefs;
         let colCount = this.columnCount;
         if(!colDefs || colDefs.length == 0) {
-            //rows are arrays
+            // rows are arrays
             _.each(this._data, d => {
                 let $row = $('<tr>');
                 for(let i = 0; i < colCount; i++) {
@@ -232,6 +206,7 @@ class QuickTable extends EventEmitter {
                 $body.append($row);
             });
         } else {
+            // rows use columnDefs
             _.each(this._data, d => {
                 let $row = $('<tr>')
                 for(let i = 0; i < colCount; i++) {
@@ -264,16 +239,17 @@ class QuickTable extends EventEmitter {
                 $body.append($row);
             });
         }
+        return this;
     }
 }
 
-$.fn.QuickTable = function() {
+$.fn.QuickTable = function(initFunc = null) {
     let tables = [];
     this.filter('table').each(function() {
         const $this = $(this);
         let table = $this.data('quickTable');
         if(!table) {
-            table = new QuickTable($this);
+            table = new QuickTable($this, initFunc);
             $this.data('quickTable', table);
         }
         tables.push(table);
@@ -291,21 +267,26 @@ const data = [
 ]
 
 $(function() {
-    let qTable = $('#quickTable').QuickTable();
-    qTable.columnDefs = [
-        { data: 'fn', cssClass: 'center' },
-        { data: 'ln' },
-        { render(data, row) { return `${row.fn} ${row.ln}`; } },
-        { data: 'fn', html: true, render(data, row) { return `<b>${row.ln}</b>, ${data}`; } }
-    ];
-    _.each(qTable.columns, c => {
-        const $check = $(`input[data-column="${c.index}"]`);
-        $check.prop('checked', c.visible);
-        const col = c;
-        $check.change(() => { col.visible = $check.is(':checked'); });
-        col.on('column.visible', (index, oldVisible, newVisible) => {
-            $check.prop('checked', newVisible);
+    let qTable = $('#quickTable').QuickTable(table => {
+        table.columnDefs = [
+            { data: 'fn', cssClass: 'center' },
+            { data: 'ln' },
+            { render(data, row) { return `${row.fn} ${row.ln}`; } },
+            { data: 'fn', html: true, render(data, row) { return `<b>${row.ln}</b>, ${data}`; } }
+        ];
+        _.each(table.columns, c => {
+            const $check = $(`input[data-column="${c.index}"]`);
+            const col = c;
+            c.on('column.visible', (_i, _o, visible) => { $check.prop('checked', visible) })
+                .trigger('column.visible', c.index, c.visible, c.visible);
+            $check.change(() => { col.visible = $check.is(':checked'); });
         });
+        table.data = data;
+    }).draw();
+    $('#export-link').click(() => {
+        let headers = ['First', 'Last', 'First Last', 'Last, First'];
+        let data = qTable.cellTextData;
+        let csv = _.join(_.map([headers, ...data], d => _.join(_.map(d, v => `"${v.replace(/"/g, '""')}"`), ',')), '\n').replace(/(^\[)|(]$)/mg, '');
+        $('#export-div').html(_.escape(csv));
     });
-    qTable.data = data;
 });

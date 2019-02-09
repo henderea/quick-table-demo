@@ -8,6 +8,7 @@ class EventEmitter {
     on(event, handler) {
         if(!this.listeners[event]) { this.listeners[event] = []; }
         this.listeners[event].push(handler);
+        return this;
     }
 
     trigger(event, ...args) {
@@ -16,6 +17,7 @@ class EventEmitter {
                 handler(...args);
             });
         }
+        return this;
     }
 }
 
