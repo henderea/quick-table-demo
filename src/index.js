@@ -6,6 +6,33 @@ import { EventEmitter } from './eventEmitter';
 import registerServiceWorker from '@henderea/static-site-builder/registerServiceWorker';
 registerServiceWorker();
 
+class QuickTableCell {
+    constructor(quickTable, rowIndex, isHead, columnIndex) {
+        this._quickTable = quickTable;
+        this._rowIndex = rowIndex;
+        this._isHead = isHead;
+        this._columnIndex = columnIndex;
+    }
+
+    get quickTable() { return this._quickTable; }
+
+    get rowIndex() { return this._rowIndex; }
+
+    get isHead() { return this._isHead; }
+
+    get columnIndex() { return this._columnIndex; }
+
+    get row() { return this.quickTable.row(this.rowIndex, this.isHead); }
+
+    get column() { return this.quickTable.column(this.columnIndex); }
+
+    get $() { return this.row.$cells.eq(this.columnIndex); }
+
+    get htmlData() { return this.$.html(); }
+
+    get textData() { return this.$.text(); }
+}
+
 class QuickTableColumn extends EventEmitter {
     constructor(quickTable, index) {
         super();
@@ -31,6 +58,10 @@ class QuickTableColumn extends EventEmitter {
         this.$[visible ? 'show' : 'hide']();
         this.trigger('column.visible', this.index, oldVisible, visible);
     }
+
+    cell(row, isHead = false) { return (r => r && r.cell(this.index))(this.quickTable.row(row, isHead)); }
+
+    headerCell(row) { return this.cell(row, true); }
 }
 
 class QuickTableRow {
@@ -38,6 +69,7 @@ class QuickTableRow {
         this._quickTable = quickTable;
         this._isHead = isHead;
         this._index = index;
+        this._cells = {};
     }
 
     get quickTable() { return this._quickTable; }
@@ -50,11 +82,21 @@ class QuickTableRow {
 
     get $cells() { return this.$.find('th,td'); }
 
+    cell(column) {
+        if(!_.inRange(column, this.quickTable.columnCount)) { return null; }
+        if(!(this._cells[column] instanceof QuickTableCell)) {
+            this._cells[column] = new QuickTableCell(this.quickTable, this.index, this.isHead, column);
+        }
+        return this._cells[column];
+    }
+
+    get cells() { return _.map(_.range(this.quickTable.columnCount), i => this.cell(i)); }
+
     get length() { return this.$cells.length; }
 
-    get cellHtmlData() { return this.$cells.map((i, e) => $(e).html()); }
+    get cellHtmlData() { return _.map(this.cells, c => c.htmlData); }
 
-    get cellTextData() { return this.$cells.map((i, e) => $(e).text()); }
+    get cellTextData() { return _.map(this.cells, c => c.textData); }
 
     get data() {
         if(this.quickTable.rawData && this.quickTable.rawData.length > this.index) {
@@ -132,6 +174,10 @@ class QuickTable extends EventEmitter {
 
     headerRow(row) { return this.row(row, true); }
 
+    cell(row, column, isHead = false) { return (r => r && r.cell(column))(this.row(row, isHead)); }
+
+    headerCell(row, column) { return this.cell(row, column, isHead); }
+
     get columnDefs() { return this._columnDefs; }
 
     set columnDefs(columnDefs) {
@@ -190,7 +236,7 @@ class QuickTable extends EventEmitter {
         let $body = this.$body;
         $body.empty();
         if(!this._data || this._data.length == 0) {
-            return;
+            return this.trigger('draw.empty');
         }
         let colDefs = this.columnDefs;
         let colCount = this.columnCount;
@@ -239,7 +285,7 @@ class QuickTable extends EventEmitter {
                 $body.append($row);
             });
         }
-        return this;
+        return this.trigger('draw');
     }
 }
 
@@ -282,6 +328,9 @@ $(function() {
             $check.change(() => { col.visible = $check.is(':checked'); });
         });
         table.data = data;
+        table.on('draw', () => {
+            table.cell(0, 0).$.css('font-weight', 'bold').css('font-style', 'italic').css('color', '#949494').css('text-decoration', 'underline');
+        });
     }).draw();
     $('#export-link').click(() => {
         let headers = ['First', 'Last', 'First Last', 'Last, First'];
