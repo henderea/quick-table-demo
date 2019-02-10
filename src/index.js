@@ -45,9 +45,9 @@ class QuickTableColumn extends EventEmitter {
 
     get index() { return this._index; }
 
-    get $head() { return this.quickTable.$table.find(`thead tr th:nth-child(${this.index + 1}), thead tr td:nth-child(${this.index + 1})`); }
+    get $head() { return this.quickTable.$.find(`thead tr th:nth-child(${this.index + 1}), thead tr td:nth-child(${this.index + 1})`); }
 
-    get $body() { return this.quickTable.$table.find(`tbody tr th:nth-child(${this.index + 1}), tbody tr td:nth-child(${this.index + 1})`); }
+    get $body() { return this.quickTable.$.find(`tbody tr th:nth-child(${this.index + 1}), tbody tr td:nth-child(${this.index + 1})`); }
 
     get $() { return this.$head.add(this.$body); }
 
@@ -132,15 +132,15 @@ class QuickTable extends EventEmitter {
 
     set autoDraw(autoDraw) { this._autoDraw = autoDraw; }
 
-    get $table() { return this._table; }
+    get $() { return this._table; }
 
-    getSection(isHead) { return this.$table.find(isHead ? 'thead' : 'tbody'); }
+    getSection(isHead) { return this.$.find(isHead ? 'thead' : 'tbody'); }
 
     get $head() { return this.getSection(true); }
 
     get $body() { return this.getSection(false); }
 
-    get columnCount() { return this.$table.find('tr').eq(0).find('th,td').length; }
+    get columnCount() { return this.$.find('tr').eq(0).find('th,td').length; }
 
     get columns() { return _.map(_.range(this.columnCount), i => this.column(i)); }
 
