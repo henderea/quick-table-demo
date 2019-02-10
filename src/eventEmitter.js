@@ -19,6 +19,13 @@ class EventEmitter {
         }
         return this;
     }
+
+    forward(event, proxy) {
+        if(proxy instanceof EventEmitter) {
+            this.on(event, (...args) => proxy.trigger(event, ...args));
+        }
+        return this;
+    }
 }
 
 export { EventEmitter };
