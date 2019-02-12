@@ -1,7 +1,7 @@
 import './index.scss';
 import $ from 'jquery';
 import _ from 'lodash';
-import setup from '@henderea/quick-table';
+import {setup} from '@henderea/quick-table';
 setup($, _);
 
 import registerServiceWorker from '@henderea/static-site-builder/registerServiceWorker';

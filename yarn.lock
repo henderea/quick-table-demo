@@ -119,10 +119,10 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@henderea/quick-table@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@henderea/quick-table/-/quick-table-1.0.1.tgz#3fc9009667b0970d0f39895a1992501a617708f4"
-  integrity sha512-AdiDJ0YjYh1dyAXDBsIwAsXS1vXgZt3YxwSk/2A+l/O55XhL3NAcerk513ntJMVdqK/SyA9w7L1tyxlyFX59Jg==
+"@henderea/quick-table@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@henderea/quick-table/-/quick-table-1.0.2.tgz#0857d8d349366f8821c85e4587d026b8491baf91"
+  integrity sha512-T+tjz+f7TLKW+c/bmjKPQ4Mw05WNDe23YnMLo23jvFHxIZJGlHC1u1rXMaCub6Jcpkl6lAcMu3ArJA8c3nPv0g==
 
 "@henderea/static-site-builder@^1.2.6":
   version "1.2.6"
