@@ -30,7 +30,7 @@ $(function() {
         });
         table.data = data;
         table.on('draw', () => {
-            table.cell(0, 0).$.css('font-weight', 'bold').css('font-style', 'italic').css('color', '#949494').css('text-decoration', 'underline');
+            table.when.cell(0, 0).do(c => c.$.css('font-weight', 'bold').css('font-style', 'italic').css('color', '#949494').css('text-decoration', 'underline'));
         });
     }).draw();
     $('#export-link').click(() => {

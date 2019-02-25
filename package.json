@@ -27,7 +27,7 @@
     "serve": "^10.1.2"
   },
   "dependencies": {
-    "@henderea/quick-table": "^1.0.2",
+    "@henderea/quick-table": "^1.0.4",
     "jquery": "^3.3.1",
     "jquery-ui": "^1.12.1",
     "lodash": "^4.17.11"
