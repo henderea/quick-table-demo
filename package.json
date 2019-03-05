@@ -18,16 +18,16 @@
   "license": "ISC",
   "repository": "https://github.com/henderea/quick-table",
   "devDependencies": {
-    "@henderea/static-site-builder": "^1.2.7",
+    "@henderea/static-site-builder": "^1.2.9",
     "chalk": "^2.4.2",
     "concurrently": "^4.1.0",
     "diff": "^4.0.1",
-    "eslint": "^5.14.1",
+    "eslint": "^5.15.1",
     "inquirer": "^6.2.2",
     "serve": "^10.1.2"
   },
   "dependencies": {
-    "@henderea/quick-table": "^1.0.4",
+    "@henderea/quick-table": "^1.0.5",
     "jquery": "^3.3.1",
     "jquery-ui": "^1.12.1",
     "lodash": "^4.17.11"
