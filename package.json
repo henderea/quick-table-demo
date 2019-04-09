@@ -12,7 +12,7 @@
     "now-build": "static-site-builder build",
     "watch": "static-site-builder watch",
     "clean": "rm -rf dist build",
-    "deploy": "now && now alias && now rm quick-table --safe --yes"
+    "deploy": "now --target production && now rm quick-table --safe --yes"
   },
   "author": "henderea",
   "license": "ISC",
