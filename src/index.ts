@@ -47,9 +47,26 @@ const data: Entry[] = [
   }
 ];
 
+function createSearch(search: string, regex: boolean, smart: boolean = true, caseInsensitive: boolean = true): RegExp {
+  if(!regex) { search = _.escapeRegExp(search); }
+  if(smart) {
+    const parts = _.map(search.match(/"[^"]+"|[^ ]+/g) || [''], (word: string) => {
+      if(word.charAt(0) === '"') {
+        const m = word.match(/^"(.*)"$/);
+        word = m ? m[1] : word;
+      }
+
+      return word.replace('"', '');
+    });
+
+    search = '^(?=.*?' + parts.join(')(?=.*?') + ').*$';
+  }
+
+  return new RegExp(search, caseInsensitive ? 'i' : '');
+}
 $(function() {
   const filters: string[] = ['', '', '', ''];
-  const checkFilter = (f: string, c: Cell<Entry> | null) => !f || f == '' || !c || new RegExp(f, 'i').test(String(c.data));
+  const checkFilter = (f: string, c: Cell<Entry> | null) => !f || f == '' || !c || createSearch(f, true).test(String(c.data));
   const applyFilters = (table: QuickTable<Entry>) => {
     table.rows
          .partitionOutOver(filters, (r: Row<Entry>, f: string, i: number) => checkFilter(f, r.cell(i)))
