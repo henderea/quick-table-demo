@@ -1,7 +1,7 @@
 import './index.scss';
 import * as $ from 'jquery';
 import * as _ from 'lodash';
-import { Column, Row, Cell, JQueryQuickTable, QuickTable, setup } from '@henderea/quick-table';
+import { JQueryQuickTable, QuickTable, Column, Row, Cell, setup } from '@henderea/quick-table';
 
 setup($, _);
 
@@ -15,8 +15,12 @@ declare global {
   }
 }
 
-// import registerServiceWorker from '@henderea/static-site-builder/registerServiceWorker';
-// registerServiceWorker();
+// @ts-ignore
+import registerServiceWorker from '@henderea/static-site-builder/registerServiceWorker';
+
+if(process.env.NODE_ENV === 'production') {
+  registerServiceWorker();
+}
 
 declare interface Entry {
   fn: string;
@@ -44,23 +48,12 @@ const data: Entry[] = [
 
 $(function() {
   const filters: string[] = ['', '', '', ''];
+  const checkFilter = (f: string, c: Cell<Entry> | null) => !f || f == '' || !c || new RegExp(f, 'i').test(String(c.data));
   const applyFilters = (table: QuickTable<Entry>) => {
-    table.rows.filter((r: Row<Entry>) => {
-      return _.every(filters, (f: string, i: number) => {
-        if(f == '') { return true; }
-        const c: Cell<Entry> | null = r.cell(i);
-        if(!c) { return true; }
-        return new RegExp(f, 'i').test(String(c.data));
-      });
-    }).visible = true;
-    table.rows.filter((r: Row<Entry>) => {
-      return !_.every(filters, (f: string, i: number) => {
-        if(f == '') { return true; }
-        const c: Cell<Entry> | null = r.cell(i);
-        if(!c) { return true; }
-        return new RegExp(f, 'i').test(String(c.data));
-      });
-    }).visible = false;
+    table.rows
+         .partitionOutOver(filters, (r: Row<Entry>, f: string, i: number) => checkFilter(f, r.cell(i)))
+         .withIncluded(r => r.visible = true)
+         .withExcluded(r => r.visible = false);
   };
   let qTable: QuickTable<Entry> = $('#quickTable').QuickTable((table: QuickTable<Entry>) => {
     table.columnDefs = [
@@ -97,7 +90,7 @@ $(function() {
   applyFilters(qTable);
   $('#export-link').on('click', () => {
     let headers = ['First', 'Last', 'First Last', 'Last, First'];
-    let data = qTable.cellTextData;
+    let data = qTable.rows.filter(r => r.visible).cellData;
     let csv = _.join(_.map([headers, ...data], d => _.join(_.map(d, v => `"${v.replace(/"/g, '""')}"`), ',')), '\n').replace(/(^\[)|(]$)/mg, '');
     $('#export-div').html(_.escape(csv));
   });

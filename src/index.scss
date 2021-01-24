@@ -1,23 +1,31 @@
 .center {
-    text-align: center;
+  text-align: center;
 }
 
 #quickTable {
-    border: 1px solid #949494;
-    border-collapse: collapse;
-    thead {
-        th, td {
-            background-color: #ccc;
-        }
-    }
+  border:          1px solid #949494;
+  border-collapse: collapse;
+
+  thead {
     th, td {
-        border: 1px solid #949494;
-        padding: 5px;
+      background-color: #ccc;
     }
+  }
+
+  th, td {
+    border:  1px solid #949494;
+    padding: 5px;
+  }
 }
 
 #export-div {
-    font-family: monospace;
-    white-space: pre;
-    padding: 10px;
+  font-family: monospace;
+  white-space: pre;
+  padding:     10px;
+}
+
+.searchbox {
+  box-sizing: border-box;
+  width:      100%;
+  padding:    5px;
 }

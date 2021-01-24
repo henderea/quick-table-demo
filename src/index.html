@@ -1,13 +1,16 @@
 <html>
-<head>
-    <title>QuickTable</title>
+    <head>
+        <title>QuickTable</title>
     </head>
     <body>
-        <input type="checkbox" data-column="0" />
-        <input type="checkbox" data-column="1" />
-        <input type="checkbox" data-column="2" />
-        <input type="checkbox" data-column="3" />
+        <b>Show Columns:</b><br />
+        <label><input type="checkbox" data-column="0" />&nbsp;First</label><br />
+        <label><input type="checkbox" data-column="1" />&nbsp;Last</label><br />
+        <label><input type="checkbox" data-column="2" />&nbsp;First Last</label><br />
+        <label><input type="checkbox" data-column="3" />&nbsp;[b]Last[/b], First</label><br />
+        <br />
         <a id="export-link" style="color: #00f;cursor: pointer;">Export</a>
+        <br /><br />
         <table id="quickTable" style="width: 1000px;">
             <thead>
                 <tr>
@@ -17,10 +20,10 @@
                     <th>[b]Last[/b], First</th>
                 </tr>
                 <tr>
-                    <th><input type="text" placeholder="Search First"/></th>
-                    <th><input type="text" placeholder="Search Last"/></th>
-                    <th><input type="text" placeholder="Search First Last"/></th>
-                    <th><input type="text" placeholder="Search [b]Last[/b], First"/></th>
+                    <th><input type="text" class="searchbox" placeholder="Search First" /></th>
+                    <th><input type="text" class="searchbox" placeholder="Search Last" /></th>
+                    <th><input type="text" class="searchbox" placeholder="Search First Last" /></th>
+                    <th><input type="text" class="searchbox" placeholder="Search [b]Last[/b], First" /></th>
                 </tr>
             </thead>
             <tbody></tbody>
