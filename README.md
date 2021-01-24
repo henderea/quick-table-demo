@@ -1,15 +1,5 @@
-# webpack-template
+# quick-table-demo
 
-## PLEASE REPLACE THIS README AND UPDATE THE METADATA IN PACKAGE.JSON AFTER COPYING
+A demo of the [@henderea/quick-table](https://github.com/henderea/quick-table) library.
 
-## Using
-
-See [this gist](https://gist.github.com/henderea/764b427cde1a7fa562b7fe8427aedb51) for a script that can set up a new project with this template for you.
-
-The script from the gist can be installed to `~/bin` with the following command (also posted in a comment on the gist):
-
-```shell
-curl -sSL "https://gist.github.com/henderea/764b427cde1a7fa562b7fe8427aedb51/raw/create-webpack.sh" -o ~/bin/create-webpack.sh
-```
-
-You can replace the path at the end of the command with another if preferred.  Make sure to mark it as executable and have the location in your `PATH`.
+You can see a live version [here](https://quick-table.henderea.com).
