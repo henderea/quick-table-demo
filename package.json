@@ -12,7 +12,7 @@
     "now-build": "static-site-builder build",
     "watch": "static-site-builder watch",
     "clean": "rm -rf dist build",
-    "deploy": "vercel --prod && vercel rm quick-table --safe --yes"
+    "deploy": "vercel --prod -C && vercel rm quick-table --safe --yes"
   },
   "author": "henderea",
   "license": "ISC",

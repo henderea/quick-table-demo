@@ -8,6 +8,7 @@ setup($, _);
 declare const window: any;
 window.$ = $;
 window._ = _;
+window.VERCEL_URL = process.env.VERCEL_URL;
 
 declare global {
   interface JQuery {
