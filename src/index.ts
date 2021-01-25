@@ -1,7 +1,7 @@
 import './index.scss';
 import * as $ from 'jquery';
 import * as _ from 'lodash';
-import { JQueryQuickTable, QuickTable, Column, Row, Cell, setup } from '@henderea/quick-table';
+import { JQueryQuickTable, QuickTable, Column, setup } from '@henderea/quick-table';
 
 setup($, _);
 
@@ -47,32 +47,7 @@ const data: Entry[] = [
   }
 ];
 
-function createSearch(search: string, regex: boolean, smart: boolean = true, caseInsensitive: boolean = true): RegExp {
-  if(!regex) { search = _.escapeRegExp(search); }
-  if(smart) {
-    const parts: string[] = _.map(search.match(/"[^"]+"|[^ ]+/g) || [''], (word: string) => {
-      if(word.charAt(0) === '"') {
-        const m: RegExpMatchArray | null = word.match(/^"(.*)"$/);
-        word = m ? m[1] : word;
-      }
-
-      return word.replace('"', '');
-    });
-
-    search = '^(?=.*?' + parts.join(')(?=.*?') + ').*$';
-  }
-
-  return new RegExp(search, caseInsensitive ? 'i' : '');
-}
 $(function() {
-  const filters: string[] = ['', '', '', ''];
-  const checkFilter = (f: string, c: Cell<Entry> | null) => !f || f == '' || !c || createSearch(f, true).test(String(c.data));
-  const applyFilters = (table: QuickTable<Entry>) => {
-    table.rows
-         .partitionOutOver(filters, (r: Row<Entry>, f: string, i: number) => checkFilter(f, r.cell(i)))
-         .withIncluded(r => r.visible = true)
-         .withExcluded(r => r.visible = false);
-  };
   let qTable: QuickTable<Entry> = $('#quickTable').QuickTable((table: QuickTable<Entry>) => {
     table.columnDefs = [
       {
@@ -96,8 +71,9 @@ $(function() {
       let searchField: HTMLInputElement = c.$head.find('input').get(0);
       searchField.addEventListener('input', () => {
         const $this: JQuery = $(searchField);
-        filters[col.index] = ($this.val() || '') as string;
-        applyFilters(table);
+        const filter: string = ($this.val() || '') as string;
+        col.setFilter(filter, true)
+           .applyFilters();
       });
     });
     table.data = data;
@@ -113,17 +89,17 @@ $(function() {
            );
     });
   }).draw() as QuickTable<Entry>;
-  applyFilters(qTable);
+  qTable.clearFilters();
   $('#export-link').on('click', () => {
     let headers: string[] = ['First', 'Last', 'First Last', 'Last, First'];
     let data: any[] = qTable.rows.filter(r => r.visible).cellData;
     let csv: string = _.join(
       _.map(
         [headers, ...data],
-          d => _.join(
-            _.map(d, v => `"${String(v).replace(/"/g, '""')}"`),
-            ','
-          )
+        d => _.join(
+          _.map(d, v => `"${String(v).replace(/"/g, '""')}"`),
+          ','
+        )
       ),
       '\n'
     ).replace(/(^\[)|(]$)/mg, '');
