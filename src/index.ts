@@ -50,9 +50,9 @@ const data: Entry[] = [
 function createSearch(search: string, regex: boolean, smart: boolean = true, caseInsensitive: boolean = true): RegExp {
   if(!regex) { search = _.escapeRegExp(search); }
   if(smart) {
-    const parts = _.map(search.match(/"[^"]+"|[^ ]+/g) || [''], (word: string) => {
+    const parts: string[] = _.map(search.match(/"[^"]+"|[^ ]+/g) || [''], (word: string) => {
       if(word.charAt(0) === '"') {
-        const m = word.match(/^"(.*)"$/);
+        const m: RegExpMatchArray | null = word.match(/^"(.*)"$/);
         word = m ? m[1] : word;
       }
 
@@ -88,12 +88,12 @@ $(function() {
       }
     ];
     table.columns.each((c: Column<Entry>) => {
-      const $check = $(`input[data-column="${c.index}"]`);
+      const $check: JQuery = $(`input[data-column="${c.index}"]`);
       const col: Column<Entry> = c;
       c.on('column.visible', e => { $check.prop('checked', e.visible); })
        .trigger('column.visible', { visible: c.visible });
       $check.on('change', () => { col.visible = $check.is(':checked'); });
-      let searchField = c.$head.find('input').get(0);
+      let searchField: HTMLInputElement = c.$head.find('input').get(0);
       searchField.addEventListener('input', () => {
         const $this: JQuery = $(searchField);
         filters[col.index] = ($this.val() || '') as string;
@@ -102,14 +102,31 @@ $(function() {
     });
     table.data = data;
     table.on('draw', () => {
-      table.when.cell(0, 0).do(c => c.$.css('font-weight', 'bold').css('font-style', 'italic').css('color', '#949494').css('text-decoration', 'underline'));
+      table.when
+           .cell(0, 0)
+           .do(
+             c => c.$
+                   .css('font-weight', 'bold')
+                   .css('font-style', 'italic')
+                   .css('color', '#949494')
+                   .css('text-decoration', 'underline')
+           );
     });
   }).draw() as QuickTable<Entry>;
   applyFilters(qTable);
   $('#export-link').on('click', () => {
-    let headers = ['First', 'Last', 'First Last', 'Last, First'];
-    let data = qTable.rows.filter(r => r.visible).cellData;
-    let csv = _.join(_.map([headers, ...data], d => _.join(_.map(d, v => `"${v.replace(/"/g, '""')}"`), ',')), '\n').replace(/(^\[)|(]$)/mg, '');
+    let headers: string[] = ['First', 'Last', 'First Last', 'Last, First'];
+    let data: any[] = qTable.rows.filter(r => r.visible).cellData;
+    let csv: string = _.join(
+      _.map(
+        [headers, ...data],
+          d => _.join(
+            _.map(d, v => `"${String(v).replace(/"/g, '""')}"`),
+            ','
+          )
+      ),
+      '\n'
+    ).replace(/(^\[)|(]$)/mg, '');
     $('#export-div').html(_.escape(csv));
   });
 });
