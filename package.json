@@ -28,7 +28,7 @@
     "vercel": "^21.1.0"
   },
   "dependencies": {
-    "@henderea/quick-table": "^1.3.0",
+    "@henderea/quick-table": "^1.4.5",
     "jquery": "^3.5.1",
     "lodash": "^4.17.20"
   }

@@ -18,6 +18,18 @@
   }
 }
 
+.sort-order {
+  color: #949494;
+
+  &::before {
+    content: '(';
+  }
+
+  &::after {
+    content: ')';
+  }
+}
+
 #export-div {
   font-family: monospace;
   white-space: pre;

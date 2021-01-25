@@ -8,22 +8,25 @@
         <label><input type="checkbox" data-column="1" />&nbsp;Last</label><br />
         <label><input type="checkbox" data-column="2" />&nbsp;First Last</label><br />
         <label><input type="checkbox" data-column="3" />&nbsp;[b]Last[/b], First</label><br />
+        <label><input type="checkbox" data-column="4" />&nbsp;Favorite Number</label><br />
         <br />
         <a id="export-link" style="color: #00f;cursor: pointer;">Export</a>
         <br /><br />
         <table id="quickTable" style="width: 1000px;">
             <thead>
                 <tr>
-                    <th>First</th>
-                    <th>Last</th>
-                    <th>First Last</th>
-                    <th>[b]Last[/b], First</th>
+                    <th>First <span class="sort-order"></span></th>
+                    <th>Last <span class="sort-order"></span></th>
+                    <th>First Last <span class="sort-order"></span></th>
+                    <th>[b]Last[/b], First <span class="sort-order"></span></th>
+                    <th>Favorite Number <span class="sort-order"></span></th>
                 </tr>
                 <tr>
                     <th><input type="text" class="searchbox" placeholder="Search First" /></th>
                     <th><input type="text" class="searchbox" placeholder="Search Last" /></th>
                     <th><input type="text" class="searchbox" placeholder="Search First Last" /></th>
                     <th><input type="text" class="searchbox" placeholder="Search [b]Last[/b], First" /></th>
+                    <th><input type="text" class="searchbox" placeholder="Search Favorite Number" /></th>
                 </tr>
             </thead>
             <tbody></tbody>
