@@ -873,10 +873,10 @@
   dependencies:
     "@hapi/hoek" "^8.3.0"
 
-"@henderea/quick-table@^1.4.5":
-  version "1.4.5"
-  resolved "https://registry.yarnpkg.com/@henderea/quick-table/-/quick-table-1.4.5.tgz#a224dd3e6aa176f43e3c772c5a7e1e86e7e7f840"
-  integrity sha512-6qOa+Cz5scfR5iDw6+zgR/XLeVJZ0vmpKLXNmU/4nae4YbEQBHYGIWN/iHx2IIVzF9gtIHuve4W2FVNJokpNbw==
+"@henderea/quick-table@^1.4.6":
+  version "1.4.6"
+  resolved "https://registry.yarnpkg.com/@henderea/quick-table/-/quick-table-1.4.6.tgz#913c42bf203b864fc0abd3844cd5fb12936903a2"
+  integrity sha512-Jhl3b+x3+i72mKGfZ563mEV3OSDD3iRDR2JPJA0WOtUB8Fofj4ou+lAynlYoV1Ss4TJUuvfFQhNNDuVVmKDa5Q==
 
 "@henderea/static-site-builder@^1.9.5":
   version "1.9.5"
