@@ -2,6 +2,8 @@ import './index.scss';
 import * as $ from 'jquery';
 import * as _ from 'lodash';
 import { JQueryQuickTable, QuickTable, Column, SortDef, setup } from '@henderea/quick-table';
+import caretUp from './caret-up.svg';
+import caretDown from './caret-down.svg';
 
 setup($, _);
 
@@ -56,12 +58,16 @@ $(function() {
   const displaySortOrders = (table: QuickTable<Entry>) => {
     const sortOrders: SortDef[] = table.sortOrders;
     table.columns.each((c: Column<Entry>) => {
-      const orderIndex: number = _.findIndex(sortOrders, (o: SortDef) => o[0] == c.index);
+      const order: SortDef | undefined = _.find(sortOrders, (o: SortDef) => o[0] == c.index);
       const span: JQuery = c.$head.find('.sort-order');
-      if(orderIndex >= 0) {
-        span.text(`${orderIndex + 1}: ${sortOrders[orderIndex][1]}`);
+      if(order) {
+        span.html(order[1] == 'desc' ? caretDown : caretUp)
+            .addClass(order[1] == 'desc' ? 'desc' : 'asc')
+            .removeClass(order[1] == 'desc' ? 'asc' : 'desc');
       } else {
-        span.text('-');
+        span.html('&nbsp;')
+            .removeClass('asc')
+            .removeClass('desc');
       }
     });
   };

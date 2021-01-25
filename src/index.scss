@@ -19,14 +19,28 @@
 }
 
 .sort-order {
-  color: #949494;
+  color:   #949494;
+  display: inline-block;
+  width:   0.625em;
+  height:  1em;
 
-  &::before {
-    content: '(';
+  svg {
+    position: relative;
+    top:      0;
+    left:     0;
+    color:    #949494;
+    width:    auto;
+    height:   1em;
+
+    path {
+      fill: #949494;
+    }
   }
 
-  &::after {
-    content: ')';
+  &.desc {
+    svg {
+      top: 0.3em;
+    }
   }
 }
 
